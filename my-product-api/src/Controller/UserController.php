@@ -37,6 +37,7 @@ class UserController extends AbstractController
         $data=$request->request->all();
         $form->submit($data);  
         $file=$request->files->all()['imageName'];
+        
         if ($form->isSubmitted() ) {
             $user->setPassword(
                 $passwordEncoder->encodePassword(
@@ -44,6 +45,7 @@ class UserController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+
             $user->setImageFile($file);
             //recuperation id partenaire
             $repository = $this->getDoctrine()->getRepository(Partenaire::class);
