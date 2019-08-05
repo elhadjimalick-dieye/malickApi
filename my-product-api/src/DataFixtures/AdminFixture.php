@@ -4,10 +4,11 @@ namespace App\DataFixtures;
 
 use App\Entity\Admin;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\This;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use phpDocumentor\Reflection\Types\This;
 
 
 
