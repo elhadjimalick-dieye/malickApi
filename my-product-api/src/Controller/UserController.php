@@ -3,92 +3,82 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserType;
-use App\Repository\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Partenaire;
+use App\Form\UserFormType;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-/**
- * @Route("/user")
- */
 class UserController extends AbstractController
 {
     /**
-     * @Route("/", name="user_index", methods={"GET"})
+     * @Route("/register", name="register")
      */
-    public function index(UserRepository $userRepository): Response
-    {
-        return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
-        ]);
-    }
-
-    /**
-     * @Route("/new", name="user_new", methods={"GET","POST"})
-     */
-    public function new(Request $request): Response
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder,EntityManagerInterface $entityManager)
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        $data=$request->request->all();
+        $form->submit($data);  
+        $file=$request->files->all()['imageName'];
+        if ($form->isSubmitted() ) {
+            // encode the plain password
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
+            $user->setImageFile($file);
+            //recuperation id partenaire
+            $repository = $this->getDoctrine()->getRepository(Partenaire::class);
+            $parte= $repository->findAll();
+            $user->setPartenaire($parte[0]);
+            $user->setStatut("actif");
+            $profil= $data["profil"];
+            $user->setProfil($profil);
+            $roles=[];
+            if($profil=="admin"){
+                $roles=["ROLE_ADMIN"];
+            }
+            elseif ($profil=="user") {
+                $roles=["ROLE_USER"];
+            }
+            elseif ($profil=="partenaire" || $profil=="adminPartenaire") {
+                $roles=["ROLE_ADMINPARTENAIRE"];
+            }
+            $user->setRoles($roles);
+
+           
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('user_index');
+            // do anything else you need here, like send an email
+
+
+            $data = [
+                'status' => 201,
+                'message' => 'L\'utilisateur a été créé'
+            ];
+
+            return new JsonResponse($data, 201);        
         }
+        $data = [
+            'status' => 500,
+            'message' => 'Renseigner tout les champs'
+        ];
 
-        return $this->render('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="user_show", methods={"GET"})
-     */
-    public function show(User $user): Response
-    {
-        return $this->render('user/show.html.twig', [
-            'user' => $user,
-        ]);
-    }
-
-    /**
-     * @Route("/{id}/edit", name="user_edit", methods={"GET","POST"})
-     */
-    public function edit(Request $request, User $user): Response
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('user_index');
-        }
-
-        return $this->render('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="user_delete", methods={"DELETE"})
-     */
-    public function delete(Request $request, User $user): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('user_index');
+        return new JsonResponse($data, 500);     
     }
 }

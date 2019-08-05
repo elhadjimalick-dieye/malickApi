@@ -9,6 +9,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use phpDocumentor\Reflection\Types\This;
 
+
+
 class AdminFixture extends Fixture
 {
 
@@ -30,6 +32,9 @@ class AdminFixture extends Fixture
         $admin->setAdresse('Mbour');
         $admin->setEmail('ndieyene@gmail.com');
         $admin->setTelephone('771327599');
+        
+
+
 
         $manager->persist($admin);
         

@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Partenaire;
+use App\Form\UserFormType;
 use App\Entity\CompteBancaire;
 use App\Repository\PartenaireRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,33 +37,33 @@ class PartenaireController extends AbstractController
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager)
     {
         $random=random_int(100000,999999);
-        $values = json_decode($request->getContent());
-############################################### PARTENAIRE ##########################################
+        $values=$request->request->all();############################################### PARTENAIRE ##########################################
             $partenaire = new Partenaire();
-            $partenaire->setNinea($values->ninea);
-            $partenaire->setRaisonSociale($values->raisonSociale);
-            $partenaire->setStatut($values->statut);
-            $partenaire->setNomComplet($values->nomComplet);
+            $partenaire->setNinea($values["ninea"]);
+            $partenaire->setRaisonSociale($values["raisonSociale"]);
+            $partenaire->setStatut("actif");
+            $partenaire->setNomComplet($values["nomComplet"]);
             
 ############################################# ADMIN PARTENAIRE ######################################
 
             $admin = new User();
-           
-            $admin->setNom($values->nom);
-            $admin->setPrenom($values->prenom);
-            $admin->setUsername($values->username);
-            $admin->setPassword($passwordEncoder->encodePassword($admin, $values->password));
-            $admin->setAdresse($values->adresse);
+            $form = $this->createForm(UserFormType::class, $admin);
+            $form->handleRequest($request);
+
+            $data=$request->request->all();
+            $form->submit($data);  
+            $file=$request->files->all()['imageName'];
+            $admin->setImageFile($file);
+            $admin->setPassword($passwordEncoder->encodePassword($admin, ("password")));
             $admin->setRoles(['ADMIN_PARTENAIRE']);
-            $admin->setStatut($values->statuts);
-            $admin->setTelephone($values->telephone);
-            $admin->setEmail($values->email);
+            $admin->setProfil('ADMIN_PARTENAIRE');
+            $admin->setStatut("actif");
             $admin->setPartenaire($partenaire);
 
 ############################################# COMPTE PARTENAIRE ######################################
             $compte = new CompteBancaire();
             $compte->setNumero($random);
-            $compte->setSolde($values->solde);
+            $compte->setSolde(0);
             $compte->setPartenaire($partenaire);
 
             $entityManager =$this ->getDoctrine()->getManager();
@@ -71,20 +72,23 @@ class PartenaireController extends AbstractController
             $entityManager->persist($compte);
             $entityManager->flush();
 
+        
+
             $data = [
                 'status' => 201,
                 'message' => 'L\'utilisateur a été créé'
             ];
 
-            return new JsonResponse($data, 201);
-        
-        $data = [
-            'status' => 500,
-            'message' => 'Vous devez renseigner les clés username et password'
-        ];
-        return new JsonResponse($data, 500);
-    }
+            return new JsonResponse($data, 201);     
 
+
+            $data = [
+                'status' => 500,
+                'message' => 'L\'utilisateur NON créé'
+            ];
+
+            return new JsonResponse($data, 500);     
+    }
     /**
      * @Route("/{id}", name="partenaire_show", methods={"GET"})
      */
