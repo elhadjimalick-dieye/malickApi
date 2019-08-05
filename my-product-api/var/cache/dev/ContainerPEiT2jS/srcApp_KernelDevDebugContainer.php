@@ -1,6 +1,6 @@
 <?php
 
-namespace ContainerBdfFAVa;
+namespace ContainerPEiT2jS;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -1471,7 +1471,7 @@ class srcApp_KernelDevDebugContainer extends Container
             'security.firewall.map.context.login' => '?',
         ]), new RewindableGenerator(function () {
             yield 'security.firewall.map.context.dev' => ($this->privates['.security.request_matcher.Iy.T22O'] ?? ($this->privates['.security.request_matcher.Iy.T22O'] = new \Symfony\Component\HttpFoundation\RequestMatcher('^/(_(profiler|wdt)|css|images|js)/')));
-            yield 'security.firewall.map.context.login' => ($this->privates['.security.request_matcher.p4VlLPC'] ?? ($this->privates['.security.request_matcher.p4VlLPC'] = new \Symfony\Component\HttpFoundation\RequestMatcher('^/api')));
+            yield 'security.firewall.map.context.login' => ($this->privates['.security.request_matcher.HeUdK73'] ?? ($this->privates['.security.request_matcher.HeUdK73'] = new \Symfony\Component\HttpFoundation\RequestMatcher('^/api/login')));
             yield 'security.firewall.map.context.api' => ($this->privates['.security.request_matcher.p4VlLPC'] ?? ($this->privates['.security.request_matcher.p4VlLPC'] = new \Symfony\Component\HttpFoundation\RequestMatcher('^/api')));
         }, 3)), ($this->services['event_dispatcher'] ?? $this->getEventDispatcherService()), ($this->privates['security.logout_url_generator'] ?? $this->getSecurity_LogoutUrlGeneratorService()));
     }

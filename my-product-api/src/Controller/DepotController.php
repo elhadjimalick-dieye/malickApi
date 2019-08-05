@@ -13,10 +13,11 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/depot")
+ * @Route("/api")
  */
 class DepotController extends AbstractController
 {
@@ -31,7 +32,8 @@ class DepotController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="depot_new", methods={"GET","POST"})
+     * @Route("/depot", name="depot_new", methods={"GET","POST"})
+     * @IsGranted("ROLE_CAISSIER_SYSTEME")
      */
     public function new(Request $request,EntityManagerInterface $entityManager)
     {
@@ -50,9 +52,12 @@ class DepotController extends AbstractController
             $numero=$comptebancaire->findOneBy(['numero'=>$values->numeroCompte]);
             $depot->setNumeroCompte($numero);
 
+
             $numero->setSolde($numero->getSolde() + $values->montant);
 
             $entityManager->persist($numero);
+       
+
             $entityManager->persist($depot);
 
             $entityManager->flush();
@@ -67,10 +72,7 @@ class DepotController extends AbstractController
 
         
 
-        return $this->render('depot/new.html.twig', [
-            'depot' => $depot,
-            'form' => $form->createView(),
-        ]);
+    
     }
 
     /**

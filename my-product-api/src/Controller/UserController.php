@@ -8,19 +8,25 @@ use App\Form\UserFormType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+
+/**
+     * @Route("/api", name="register")
+     */
 class UserController extends AbstractController
 {
     /**
      * @Route("/register", name="register")
+     * @IsGranted("ROLE_ADMIN_SYSTEME")
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder,EntityManagerInterface $entityManager)
     {
@@ -32,7 +38,6 @@ class UserController extends AbstractController
         $form->submit($data);  
         $file=$request->files->all()['imageName'];
         if ($form->isSubmitted() ) {
-            // encode the plain password
             $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $user,
@@ -63,9 +68,6 @@ class UserController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
-
-            // do anything else you need here, like send an email
-
 
             $data = [
                 'status' => 201,

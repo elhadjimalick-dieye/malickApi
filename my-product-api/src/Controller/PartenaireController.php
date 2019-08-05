@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 /**
- * @Route("/partenaire")
+ * @Route("/api")
  */
 class PartenaireController extends AbstractController
 {
@@ -32,7 +32,7 @@ class PartenaireController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="partenaire_new", methods={"GET","POST"})
+     * @Route("/partenaire", name="partenaire_new", methods={"GET","POST"})
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager)
     {
