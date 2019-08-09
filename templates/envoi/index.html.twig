@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Envoi index{% endblock %}
+
+{% block body %}
+    <h1>Envoi index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Telephone</th>
+                <th>Montant</th>
+                <th>NomRecepteur</th>
+                <th>PrenomRecepteur</th>
+                <th>NumeroRecepteur</th>
+                <th>NumeroTransaction</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for envoi in envois %}
+            <tr>
+                <td>{{ envoi.id }}</td>
+                <td>{{ envoi.nom }}</td>
+                <td>{{ envoi.prenom }}</td>
+                <td>{{ envoi.telephone }}</td>
+                <td>{{ envoi.montant }}</td>
+                <td>{{ envoi.NomRecepteur }}</td>
+                <td>{{ envoi.PrenomRecepteur }}</td>
+                <td>{{ envoi.NumeroRecepteur }}</td>
+                <td>{{ envoi.numeroTransaction }}</td>
+                <td>
+                    <a href="{{ path('envoi_show', {'id': envoi.id}) }}">show</a>
+                    <a href="{{ path('envoi_edit', {'id': envoi.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('envoi_new') }}">Create new</a>
+{% endblock %}

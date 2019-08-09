@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Retrait index{% endblock %}
+
+{% block body %}
+    <h1>Retrait index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Cni</th>
+                <th>Montant</th>
+                <th>NumeroTransaction</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for retrait in retraits %}
+            <tr>
+                <td>{{ retrait.id }}</td>
+                <td>{{ retrait.Nom }}</td>
+                <td>{{ retrait.prenom }}</td>
+                <td>{{ retrait.Cni }}</td>
+                <td>{{ retrait.Montant }}</td>
+                <td>{{ retrait.numeroTransaction }}</td>
+                <td>
+                    <a href="{{ path('retrait_show', {'id': retrait.id}) }}">show</a>
+                    <a href="{{ path('retrait_edit', {'id': retrait.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('retrait_new') }}">Create new</a>
+{% endblock %}

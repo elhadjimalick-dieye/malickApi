@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Envoi{% endblock %}
+
+{% block body %}
+    <h1>Create new Envoi</h1>
+
+    {{ include('envoi/_form.html.twig') }}
+
+    <a href="{{ path('envoi_index') }}">back to list</a>
+{% endblock %}

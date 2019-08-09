@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Envoi{% endblock %}
+
+{% block body %}
+    <h1>Envoi</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ envoi.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ envoi.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ envoi.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ envoi.telephone }}</td>
+            </tr>
+            <tr>
+                <th>Montant</th>
+                <td>{{ envoi.montant }}</td>
+            </tr>
+            <tr>
+                <th>NomRecepteur</th>
+                <td>{{ envoi.NomRecepteur }}</td>
+            </tr>
+            <tr>
+                <th>PrenomRecepteur</th>
+                <td>{{ envoi.PrenomRecepteur }}</td>
+            </tr>
+            <tr>
+                <th>NumeroRecepteur</th>
+                <td>{{ envoi.NumeroRecepteur }}</td>
+            </tr>
+            <tr>
+                <th>NumeroTransaction</th>
+                <td>{{ envoi.numeroTransaction }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('envoi_index') }}">back to list</a>
+
+    <a href="{{ path('envoi_edit', {'id': envoi.id}) }}">edit</a>
+
+    {{ include('envoi/_delete_form.html.twig') }}
+{% endblock %}
