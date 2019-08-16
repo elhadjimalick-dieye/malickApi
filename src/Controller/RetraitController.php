@@ -39,13 +39,20 @@ class RetraitController extends AbstractController
             $entityManager->persist($retrait);
             $entityManager->flush();
 
-            return $this->redirectToRoute('retrait_index');
+            $data = [
+                'status' => 201,
+                'message' => 'retrait effectué'
+            ];
+    
+            return new JsonResponse($data, 201);    
         }
+        $data = [
+            'status' => 500,
+            'message' => 'retrait Non effectué'
+        ];
 
-        return $this->render('retrait/new.html.twig', [
-            'retrait' => $retrait,
-            'form' => $form->createView(),
-        ]);
+        return new JsonResponse($data, 500);    
+       
     }
 
     /**

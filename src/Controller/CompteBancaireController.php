@@ -44,20 +44,12 @@ class CompteBancaireController extends AbstractController
         if ($form->isSubmitted() /* && $form->isValid() */) {
         $compteBancaire->setNumero($numero);
 
-        //$admin = new Partenaire();
-        // $form = $this->createForm(Partenaire::class, $admin);
-        // $form->handleRequest($request);
-        //$repository = $this->getDoctrine()->getRepository(Partenaire::class);
-           // $parte= $repository->findAll();
-           // $admin->setPartenaire($parte[0]);
-        // $compteBancaire->setPartenaire($admin);
 
         $compteBancaire->setSolde("0");
 
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($compteBancaire);
-            //$entityManager->persist($admin);
             $entityManager->flush();
 
             $data = [

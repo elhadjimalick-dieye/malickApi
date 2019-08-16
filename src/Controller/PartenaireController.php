@@ -16,14 +16,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use App\Form\ProfilType;
-use App\Entity\Profil;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 /**
  * @Route("/api")
  */
 class PartenaireController extends AbstractController
-{
+{ 
+   
     /**
      * @Route("/", name="partenaire_index", methods={"GET","POST"})
      */
@@ -137,5 +138,36 @@ class PartenaireController extends AbstractController
         }
 
         return $this->redirectToRoute('partenaire_index');
+    }
+ /**
+     * @Route("/pdf", name="pdf", methods={"GET"})
+     */
+    public function indexpdf()
+    {
+        // Configure Dompdf according to your needs
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        
+        // Instantiate Dompdf with our options
+        $dompdf = new Dompdf($pdfOptions);
+        
+        // Retrieve the HTML generated in our twig file
+        $html = $this->renderView('partenaire/index.html.twig', [
+            'title' => "Welcome to our PDF Test"
+        ]);
+        
+        // Load HTML to Dompdf
+        $dompdf->loadHtml($html);
+        
+        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser (force download)
+        $dompdf->stream("mypdf.pdf", [
+            "Attachment" => false
+        ]);
     }
 }

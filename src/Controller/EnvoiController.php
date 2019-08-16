@@ -5,18 +5,19 @@ namespace App\Controller;
 use App\Entity\Envoi;
 use App\Form\EnvoiType;
 use App\Repository\EnvoiRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/envoi")
+ * @Route("/api")
  */
 class EnvoiController extends AbstractController
 {
     /**
-     * @Route("/", name="envoi_index", methods={"GET"})
+     * @Route("/envoie", name="envoi_index", methods={"GET"})
      */
     public function index(EnvoiRepository $envoiRepository): Response
     {
@@ -28,7 +29,7 @@ class EnvoiController extends AbstractController
     /**
      * @Route("/new", name="envoi_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request)
     {
         $envoi = new Envoi();
         $form = $this->createForm(EnvoiType::class, $envoi);
@@ -36,16 +37,26 @@ class EnvoiController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
             $entityManager->persist($envoi);
             $entityManager->flush();
 
-            return $this->redirectToRoute('envoi_index');
+
+            $data = [
+                'status' => 201,
+                'message' => 'envoie effectuée'
+            ];
+    
+            return new JsonResponse($data, 201);    
         }
 
-        return $this->render('envoi/new.html.twig', [
-            'envoi' => $envoi,
-            'form' => $form->createView(),
-        ]);
+        $data = [
+            'status' => 500,
+            'message' => 'envoie echouée '
+        ];
+
+        return new JsonResponse($data, 500);    
+   
     }
 
     /**
